@@ -1,0 +1,28 @@
+[package]
+name = "engagespot"
+version = "0.1.0"
+edition = "2021"
+authors = ["Engagespot <support@engagespot.co>", "Hemand S <hemanditwiz@gmail.com>"]
+description = "Rust library for communicating with Engagespot REST API. Send multi-channel notifications from your rust app."
+repository = "http://github.com/engagespot/engagespot-rust"
+readme = "README.md"
+license = "MIT"
+keywords = ["notifications", "realtime", "engagespot"]
+categories = ["web-programming", "web-programming::http-client"]
+
+[lib]
+name = "engagespot"
+path = "src/lib.rs"
+
+[[example]]
+name = "simple"
+path = "examples/simple.rs"
+
+[dependencies]
+reqwest = {version = "0.11.14", features = ["json"]}
+serde = {version = "1.0.152", features = ["derive"]}
+serde_json = "1.0.93"
+
+[dev-dependencies]
+dotenv = "0.15.0"
+tokio = {version = "1.25.0", features = ["macros", "rt"]}
