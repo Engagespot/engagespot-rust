@@ -100,9 +100,12 @@ impl Engagespot {
     /// **Example:**
     /// ```
     /// use engagespot::{Engagespot, NotificationBuilder};
-    /// let client = Engagespot::new("api_key", "api_secret");
-    /// let notification = NotificationBuilder::new("title", "message").build();
-    /// let response = client.send(&notification).await;
+    /// #[tokio::main(flavor = "current_thread")]
+    /// async fn main() {
+    ///   let client = Engagespot::new("api_key", "api_secret");
+    ///   let notification = NotificationBuilder::new("title", &vec!["hello@foo.com".to_string()]).build();
+    ///   let response = client.send(&notification).await;
+    /// }
     /// ```
     pub async fn send<T: Serialize>(
         &self,
@@ -121,12 +124,18 @@ impl Engagespot {
     /// **Example:**
     /// 
     /// ```
+    /// 
+    /// use serde::{Deserialize, Serialize};
+    /// use engagespot::Engagespot;
     ///  #[derive(Serialize, Deserialize)]
     ///  struct Data {
     ///     foo: String,
     /// }
-    /// let client = Engagespot::new("api_key", "api_secret");
-    /// client.create_or_update_user_attrs("identifier", &Data { foo: "bar".to_string() }).await;
+    /// #[tokio::main(flavor = "current_thread")]
+    /// async fn main() {
+    ///   let client = Engagespot::new("api_key", "api_secret");
+    ///   client.create_or_update_user_attrs("identifier", &Data { foo: "bar".to_string() }).await;
+    /// }
     /// ```
     /// 
     pub async fn create_or_update_user_attrs<T: Serialize>(&self, identifier: &str, attrs: &T) -> Result<String, String> {

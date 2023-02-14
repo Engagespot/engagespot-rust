@@ -14,7 +14,7 @@
 //!
 //! ```
 //!
-//! use engagespot::Engagespot;
+//! use engagespot::{Engagespot, NotificationBuilder};
 //!
 //! // A reactor like tokio or async-std is required to run the async code.
 //! #[tokio::main(flavor = "current_thread")]
@@ -22,9 +22,10 @@
 //!   // initialize engagespot client by passing the api_key and api_secret
 //!   let client = Engagespot::new("api_key", "api_secret");
 //!
-//! let notification = NotificationBuilder::new("title", "message").build();
+//! let notification = NotificationBuilder::new("title", &vec!["foo@bar.com".to_string()]).build();
 //! let response = client.send(&notification).await.unwrap_or_else(|err: String| format!("Error: {}", err));
-//! println!("new res is {}", res);
+//! println!("new res is {}", response);
+//! }
 //! ```
 
 mod channels;

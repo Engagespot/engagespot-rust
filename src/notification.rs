@@ -2,7 +2,7 @@ use crate::NotificationItem;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
-pub struct Notification<T: Serialize = Option<String>> {
+pub struct Notification<T: Serialize> {
     /// Notification item. Required.
     notification: NotificationItem,
     /// Recipients of the notification. Required.
@@ -17,26 +17,51 @@ pub struct Notification<T: Serialize = Option<String>> {
     category: Option<String>,
 }
 
-pub struct NotificationBuilder<'a, T: Serialize> {
+pub struct NotificationBuilder<'a, T: Serialize = ()> {
     pub notification: NotificationItem,
     pub recipients: &'a Vec<String>,
     pub data: Option<T>,
     pub category: Option<String>,
 }
 
-impl<'a, T: Serialize> NotificationBuilder<'a, T> {
+trait WithData<T: Serialize> {
+    fn data(self, data: T) -> Self;
+}
 
+impl<'a> NotificationBuilder<'a, ()> {
     /// Create a new notification builder with the title and recipients.
     /// Other fields can be set by chaining the methods.
     /// **Example:**
     /// ```
     /// use engagespot::{NotificationBuilder, NotificationItem};
-    /// let notification = NotificationBuilder::new("Title", vec!["email1".to_string(), "email2".to_string()]).build();
+    /// let notification = NotificationBuilder::new("Title", &vec!["email1".to_string(), "email2".to_string()]).build();
     pub fn new(title: &str, recipients: &'a Vec<String>) -> Self {
         NotificationBuilder {
             notification: NotificationItem::new(title),
             recipients,
             data: None,
+            category: None,
+        }
+    }
+}
+
+impl<'a, T: Serialize> NotificationBuilder<'a, T> {
+    /// Create a new notification builder with the title and recipients and optional data.
+    /// Other fields can be set by chaining the methods.
+    /// **Example:**
+    /// ```
+    /// use serde::{Deserialize, Serialize};
+    /// #[derive(Serialize, Deserialize)]
+    /// struct Data<'a> {
+    ///foo: &'a str,
+    /// }
+    /// use engagespot::{NotificationBuilder, NotificationItem};
+    /// let notification = NotificationBuilder::new_with_data("Title", &vec!["email1".to_string(), "email2".to_string()], &Data { foo: "bar" }).build();
+    pub fn new_with_data(title: &str, recipients: &'a Vec<String>, data: T) -> Self {
+        NotificationBuilder {
+            notification: NotificationItem::new(title),
+            recipients,
+            data: Some(data),
             category: None,
         }
     }
@@ -77,16 +102,16 @@ impl<'a, T: Serialize> NotificationBuilder<'a, T> {
         self
     }
 
+    /// Set the category of the notification.
+    pub fn category(mut self, category: String) -> Self {
+        self.category = Some(category);
+        self
+    }
+
     /// Set the additional data of the notification.
     /// Should be a serde serializable json object.
     pub fn data(mut self, data: T) -> Self {
         self.data = Some(data);
-        self
-    }
-
-    /// Set the category of the notification.
-    pub fn category(mut self, category: String) -> Self {
-        self.category = Some(category);
         self
     }
 

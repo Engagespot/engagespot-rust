@@ -17,13 +17,16 @@ async fn main() {
 
     let client = Engagespot::new(&api_key, &api_secret);
 
-    let notification = NotificationBuilder::new("Test", &vec!["hemanditwiz@gmail.com".to_string()])
-        .title("Message received")
-        .message("New message received")
-        .icon("favicon.png")
-        .url("https://google.com")
-        .data(&Data { foo: "bar" })
-        .build();
+    let notification = NotificationBuilder::new_with_data(
+        "Test",
+        &vec!["hemanditwiz@gmail.com".to_string()],
+        &Data { foo: "bar" },
+    )
+    .title("Message received")
+    .message("New message received")
+    .icon("favicon.png")
+    .url("https://google.com")
+    .build();
     let res = client
         .send(&notification)
         .await
